@@ -1,5 +1,16 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {};
+const isGithubPages = process.env.GITHUB_PAGES === "true";
+
+const nextConfig: NextConfig = {
+  ...(isGithubPages
+    ? {
+        output: "export",
+        basePath: "/avaliacao-atitudinal",
+        trailingSlash: true,
+        images: { unoptimized: true },
+      }
+    : {}),
+};
 
 export default nextConfig;
