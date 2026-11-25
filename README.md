@@ -40,6 +40,15 @@ Após iniciar o servidor, acesse:
 - Página principal: `http://localhost:3000`
 - Listagem de estudantes (Marco 1): `http://localhost:3000/lab/students`
 
+### Como encerrar o servidor
+
+- No terminal em que o servidor está rodando, pressione **`Ctrl + C`** (no Windows, se solicitado a confirmar *"Deseja finalizar o arquivo em lotes (S/N)?"*, digite **`S`** e pressione **`Enter`**).
+- Caso a porta `3000` continue ocupada em segundo plano no Windows (PowerShell):
+
+```powershell
+Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+```
+
 ---
 
 ## Árvore de Arquivos Produzidos
