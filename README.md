@@ -4,6 +4,8 @@ Sistema web para acompanhamento contínuo e consolidado da avaliação atitudina
 
 O escopo modelado pela equipe adota o **registro contínuo por encontro avaliativo consolidado em períodos** (bimestres/trimestres): professores atribuem pontuações em escala discreta de `1` a `5` por categoria de atitude e, opcionalmente, registram observações qualitativas, mantendo o **Estudante (`Student`)** como entidade central do domínio.
 
+- **Demonstração online (GitHub Pages):** https://rrfeisen.github.io/avaliacao-atitudinal/
+
 ---
 
 ## Integrantes da Equipe
