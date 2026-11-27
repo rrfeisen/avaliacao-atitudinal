@@ -190,7 +190,8 @@ export default function StudentsPage() {
               />
               <input
                 id="student-search"
-                type="search"
+                type="text"
+                role="searchbox"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder="Pesquisar por nome, matrícula ou e-mail..."
