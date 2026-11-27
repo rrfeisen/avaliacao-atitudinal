@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertCircle, Loader2, Users } from "lucide-react";
+import Link from "next/link";
+import { AlertCircle, ArrowLeft, Loader2, Users } from "lucide-react";
 import type { Student } from "@/types/domain";
 import { listStudents } from "@/lib/data";
 import { StudentCard } from "@/components/students/student-card";
@@ -53,6 +54,16 @@ export default function StudentsPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      <nav aria-label="Navegação de retorno" className="mb-4">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 transition-colors hover:text-indigo-600"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          <span>Voltar ao início</span>
+        </Link>
+      </nav>
+
       <header className="mb-8 flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
