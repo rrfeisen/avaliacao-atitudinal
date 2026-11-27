@@ -2,15 +2,23 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AlertCircle, ArrowLeft, Loader2, Users } from "lucide-react";
+import { AlertCircle, ArrowLeft, Loader2, Search, Users, X } from "lucide-react";
 import type { Student } from "@/types/domain";
 import { listStudents } from "@/lib/data";
 import { StudentCard } from "@/components/students/student-card";
+
+function normalizeText(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
 
 export default function StudentsPage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     let cancelled = false;
@@ -51,6 +59,20 @@ export default function StudentsPage() {
   const transferredCount = students.filter(
     (s) => s.status === "transferred",
   ).length;
+
+  const normalizedQuery = normalizeText(searchQuery.trim());
+  const filteredStudents = normalizedQuery
+    ? students.filter((student) => {
+        const nameMatch = normalizeText(student.name).includes(normalizedQuery);
+        const registrationMatch = normalizeText(student.registration).includes(
+          normalizedQuery,
+        );
+        const emailMatch = normalizeText(student.email).includes(
+          normalizedQuery,
+        );
+        return nameMatch || registrationMatch || emailMatch;
+      })
+    : students;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -156,15 +178,70 @@ export default function StudentsPage() {
       )}
 
       {!isLoading && error === null && students.length > 0 && (
-        <section aria-label="Lista de estudantes">
-          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {students.map((student) => (
-              <li key={student.id}>
-                <StudentCard student={student} />
-              </li>
-            ))}
-          </ul>
-        </section>
+        <>
+          <div className="mb-6">
+            <label htmlFor="student-search" className="sr-only">
+              Pesquisar estudante por nome, matrícula ou e-mail
+            </label>
+            <div className="relative max-w-md">
+              <Search
+                className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                aria-hidden="true"
+              />
+              <input
+                id="student-search"
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Pesquisar por nome, matrícula ou e-mail..."
+                className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 shadow-xs focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  aria-label="Limpar busca"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+                >
+                  <X className="h-4 w-4" aria-hidden="true" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {filteredStudents.length === 0 ? (
+            <section
+              role="status"
+              aria-live="polite"
+              className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center"
+            >
+              <Search className="h-7 w-7 text-slate-400" aria-hidden="true" />
+              <h2 className="mt-3 text-base font-semibold text-slate-900">
+                Nenhum estudante encontrado
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Não encontramos resultados para &ldquo;{searchQuery.trim()}&rdquo;.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="mt-4 rounded-lg bg-indigo-50 px-3.5 py-1.5 text-sm font-medium text-indigo-700 transition-colors hover:bg-indigo-100"
+              >
+                Limpar busca
+              </button>
+            </section>
+          ) : (
+            <section aria-label="Lista de estudantes">
+              <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredStudents.map((student) => (
+                  <li key={student.id}>
+                    <StudentCard student={student} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </>
       )}
     </main>
   );
